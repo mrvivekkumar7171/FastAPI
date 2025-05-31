@@ -138,11 +138,11 @@ uvicorn main:app --reload
 ## ML model with FastAPI
 - An website that helps patient to maintain patient records to treat the patient better as physical documents can be lost, miss-place etc. It allows you to add new customer profile(create), view(one individual and all patient), update and delete the existing customers. **Here, we are storing the customer profile in a json but ideally one should store in a database.**
 - **endpoints** in the example:
-/create
-/view
-/view/patient_id 
-/update/patient_id 
-/delete/polient_id
+    - /create
+    - /view
+    - /view/patient_id 
+    - /update/patient_id 
+    - /delete/polient_id
 - **Http Methods**: In website the software is installed in **server** and accessed by the **client** on other machine using http protocol.
 There are two types of websites(softwares):
 1. **Static**: very less interaction between user and client like calender, Blog, Government Website and clock.
@@ -158,4 +158,4 @@ There are two types of websites(softwares):
 
 
 
-- deployment of API on AWS
+## deployment of API on AWS
