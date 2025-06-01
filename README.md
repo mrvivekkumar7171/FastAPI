@@ -154,8 +154,76 @@ There are two types of websites(softwares):
     **Delete**: **DELETE**
 ![Patients](images/image-4.png)
 
+## Path Parameters: They are dynamic segments of a URL path used to identify a specific resource. The Path() furiction in FastAPI is used to provide metadata, validation rules, and documentation hints for path parameters in your API endpoints.
+Example:
+    Title
+    Description
+    Example
+    ge(greater than equal to), gt, le, It
+    Min_length
+    Max_length
+    regex
+    ... (means required)
+
+**HTTP status codes** are 3-digit numbers returned by a web server (like FastAPI) to indicate the result of a client's request (like from a browser or API consumer).
+![alt text](image.png)
+
+They help the client (browser, frontend, mobile app, etc.) understand:
+    - whether the request was successful,
+    - whether something went wrong,
+    - and what kind of issue occurred (if any).
+
+2xx     Success         The request was successfully received and processed
+3xx     Redirection     Further action needs to be taken (e.g., redirect)
+4xx     Client          Error Something is wrong with the request from the client
+5xx     Server          Error Something went wrong on the server side
 
 
+200 OK                      Standard success                        A GET or POST succeeded
+201 Created                 Resource created                        After a POST that creates something
+204 No Content              Success, but no data returned           After a DELETE request
 
+400 Bad Request             Malformed or invalid request                Missing field, wrong data type
+401 Unauthorized            No/invalid authentication                   Login required
+403 Forbidden               Authenticated, but no permission            Logged in but not allowed
+404 Not Found               Resource doesn't exist                      Patient ID not in DB
+
+500 Internal Server Error   Generic failure                             Something broke on the server
+502 Bad Gateway             Gateway (like Nginx) failed to reach backend
+503 Service Unavailable     Server is down or overloaded
+
+
+**HTTPException** is a special built-in exception in FastAPI used to return custom HTTP error responses when something goes wrong in your API.
+Instead of returning a normal JSON or crashing the server, you can gracefully raise an error with:
+    ⚫ a proper HTTP status code (like 404, 400, 403, etc.)
+    ⚫ a custom error message
+    ⚫ (optional) extra headers
+
+
+## Query Parameter: They are optional key-value pairs appended to the end of a URL, used to pass additional data to the server in an HTTP request. They are typically employed for operations like filtering, sorting, searching, and pagination, without altering the endpoint path itself.
+    ```bash
+    /patients?city=Delhi&sort_by=age
+    ```
+    • The ? marks the start of query parameters.
+    • Each parameter is a key-value pair: `key=value`
+    • Multiple parameters are separated by `&`
+    In this case:
+        • `city=Delhi` is a query parameter for filtering
+        • `sort_by=age` is a query parameter for sorting
+
+**Query()** is a utility function provided by FastAPI to declare, validate, and document query parameters in your API endpoints.
+
+It allows you to:
+    • Set default values
+    • Enforce validation rules
+    • Add metadata like description, title, examples
+
+default                 Set default value (e.g., Query(e))
+title                   Displayed in API docs
+description             Detailed explanation in Swagger
+example / examples      Provide sample inputs
+min_length, max_length  Validate string length
+ge, gt, le, it          Validate numeric bounds
+regex                   Pattern match for strings
 
 ## deployment of API on AWS
