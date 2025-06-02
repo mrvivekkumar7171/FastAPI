@@ -252,9 +252,9 @@ They help the client (browser, frontend, mobile app, etc.) understand:
 
 **HTTPException** is a special built-in exception in FastAPI used to return custom HTTP error responses when something goes wrong in your API.
 Instead of returning a normal JSON or crashing the server, you can gracefully raise an error with:
-    ⚫ a proper HTTP status code (like 404, 400, 403, etc.)
-    ⚫ a custom error message
-    ⚫ (optional) extra headers
+- a proper HTTP status code (like 404, 400, 403, etc.)
+- a custom error message
+- (optional) extra headers
 
 Example of HTTPException, HTTP status codes and Path Parameters.
 ```bash
