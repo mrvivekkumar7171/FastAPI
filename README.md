@@ -5,6 +5,7 @@ Think of an API as a waiter in a restaurant:
 The customer (frontend) places an order.
 The waiter (API) communicates this to the kitchen (backend).
 The kitchen prepares the dish (response) and the waiter delivers it back to the customer.
+
 ![API](images/image.png)
 ![API Example in Restaurant](images/image-1.png)
 
@@ -40,6 +41,7 @@ APIs are essential for making machine learning models accessible and usable acro
 To make a machine learning model accessible to the rest of the world, an API (Application Programming Interface) is required. Machine learning models often rely on structured data or predictions, and users (clients or customers) want to access these services through a backend system.
 APIs act as bridges that allow your ML model (hosted on a server) to be used on various platforms, such as websites, mobile apps, or even other services.
 For example, OpenAI's ChatGPT model is accessible through an API—developers can integrate it into their own websites or applications seamlessly.
+
 ![API on multiple platform](images/image-2.png)
 
 ## What is fastAPI?
@@ -148,6 +150,7 @@ There are two types of websites(softwares):
 1. **Static**: very less interaction between user and client like calender, Blog, Government Website and clock.
 2. **Dynamic**: too much interaction between user and client like MSExcel, YouTube etc.
 - Four operations(**CRUD**) performed in Dynamic Software are:
+
 **Create**: **POST**
 ```bash
 @app.post('/create')
