@@ -140,21 +140,74 @@ uvicorn main:app --reload
 - **endpoints** in the example:
     - /create
     - /view
-    - /view/patient_id 
-    - /update/patient_id 
+    - /view/patient_id
+    - /update/patient_id
     - /delete/polient_id
 - **Http Methods**: In website the software is installed in **server** and accessed by the **client** on other machine using http protocol.
 There are two types of websites(softwares):
 1. **Static**: very less interaction between user and client like calender, Blog, Government Website and clock.
 2. **Dynamic**: too much interaction between user and client like MSExcel, YouTube etc.
 - Four operations(**CRUD**) performed in Dynamic Software are:
-    **Create**: **POST**
-    **Retrieve**: **GET**
-    **Update**: **PUTs**
-    **Delete**: **DELETE**
+**Create**: **POST**
+```bash
+@app.post('/create')
+def create_patient(patient: Patient):
+    # load existing data
+    data = load_data()
+    # check if the patient already exists
+    if patient.id in data:
+        raise HTTPException(status_code=400, detail='Patient already exists')
+    # new patient add to the database
+    data[patient.id] = patient.model_dump(exclude=['id'])
+    # save into the json file
+    save_data(data)
+    return JSONResponse(status_code=201, content={'message':'patient created successfully'})
+```
+**Retrieve**: **GET**
+```bash
+@app.get("/view")
+def view():
+    data = load_data()
+    return data
+```
+**Update**: **PUTs**
+```bash
+@app.put('/edit/{patient_id}')
+def update_patient(patient_id: str, patient_update: PatientUpdate):
+    data = load_data()
+    if patient_id not in data:
+        raise HTTPException(status_code=404, detail='Patient not found')
+    existing_patient_info = data[patient_id]
+    updated_patient_info = patient_update.model_dump(exclude_unset=True)
+    for key, value in updated_patient_info.items():
+        existing_patient_info[key] = value
+    #existing_patient_info -> pydantic object -> updated bmi + verdict
+    existing_patient_info['id'] = patient_id
+    patient_pydandic_obj = Patient(**existing_patient_info)
+    #-> pydantic object -> dict
+    existing_patient_info = patient_pydandic_obj.model_dump(exclude='id')
+    # add this dict to data
+    data[patient_id] = existing_patient_info
+    # save data
+    save_data(data)
+    return JSONResponse(status_code=200, content={'message':'patient updated'})
+```
+**Delete**: **DELETE**
+```bash
+@app.delete('/delete/{patient_id}')
+def delete_patient(patient_id: str):
+    # load data
+    data = load_data()
+    if patient_id not in data:
+        raise HTTPException(status_code=404, detail='Patient not found')
+    del data[patient_id]
+    save_data(data)
+    return JSONResponse(status_code=200, content={'message':'patient deleted'})
+```
 ![Patients](images/image-4.png)
 
-## Path Parameters: They are dynamic segments of a URL path used to identify a specific resource. The Path() furiction in FastAPI is used to provide metadata, validation rules, and documentation hints for path parameters in your API endpoints.
+## Path Parameters: 
+They are dynamic segments of a URL path used to identify a specific resource. The Path() furiction in FastAPI is used to provide metadata, validation rules, and documentation hints for path parameters in your API endpoints.
 Example:
     Title
     Description
@@ -166,6 +219,7 @@ Example:
     ... (means required)
 
 **HTTP status codes** are 3-digit numbers returned by a web server (like FastAPI) to indicate the result of a client's request (like from a browser or API consumer).
+
 ![alt text](image.png)
 
 They help the client (browser, frontend, mobile app, etc.) understand:
@@ -173,25 +227,25 @@ They help the client (browser, frontend, mobile app, etc.) understand:
     - whether something went wrong,
     - and what kind of issue occurred (if any).
 
-2xx     Success         The request was successfully received and processed
-3xx     Redirection     Further action needs to be taken (e.g., redirect)
-4xx     Client          Error Something is wrong with the request from the client
-5xx     Server          Error Something went wrong on the server side
+| Code Range | Meaning        | Description                                              |
+|------------|----------------|----------------------------------------------------------|
+| `2xx`      | Success        | The request was successfully received and processed      |
+| `3xx`      | Redirection    | Further action needs to be taken (e.g., redirect)        |
+| `4xx`      | Client Error   | Something is wrong with the request from the client      |
+| `5xx`      | Server Error   | Something went wrong on the server side                  |
 
-
-200 OK                      Standard success                        A GET or POST succeeded
-201 Created                 Resource created                        After a POST that creates something
-204 No Content              Success, but no data returned           After a DELETE request
-
-400 Bad Request             Malformed or invalid request                Missing field, wrong data type
-401 Unauthorized            No/invalid authentication                   Login required
-403 Forbidden               Authenticated, but no permission            Logged in but not allowed
-404 Not Found               Resource doesn't exist                      Patient ID not in DB
-
-500 Internal Server Error   Generic failure                             Something broke on the server
-502 Bad Gateway             Gateway (like Nginx) failed to reach backend
-503 Service Unavailable     Server is down or overloaded
-
+| Status Code | Meaning                   | When It Occurs                                      |
+|-------------|---------------------------|-----------------------------------------------------|
+| `200 OK`    | Standard success          | A GET or POST succeeded                             |
+| `201 Created` | Resource created        | After a POST that creates something                 |
+| `204 No Content` | Success, no data     | After a DELETE request                              |
+| `400 Bad Request` | Malformed request   | Missing field, wrong data type                      |
+| `401 Unauthorized` | Auth required      | No or invalid authentication; login required        |
+| `403 Forbidden` | Permission denied     | Logged in but not allowed                           |
+| `404 Not Found` | Resource missing      | Patient ID not in database                          |
+| `500 Internal Server Error` | Server failure | Something broke on the server                  |
+| `502 Bad Gateway` | Gateway failure     | Gateway (e.g., Nginx) failed to reach backend       |
+| `503 Service Unavailable` | Server down | Server is down or overloaded                        |
 
 **HTTPException** is a special built-in exception in FastAPI used to return custom HTTP error responses when something goes wrong in your API.
 Instead of returning a normal JSON or crashing the server, you can gracefully raise an error with:
@@ -199,6 +253,16 @@ Instead of returning a normal JSON or crashing the server, you can gracefully ra
     ⚫ a custom error message
     ⚫ (optional) extra headers
 
+Example of HTTPException, HTTP status codes and Path Parameters.
+```bash
+@app.get('/patient/{patient_id}')
+def view_patient(patient_id: str = Path(..., description='ID of the patient in the DB', example='P001')):
+    # load all the patients
+    data = load_data()
+    if patient_id in data:
+        return data[patient_id]
+    raise HTTPException(status_code=404, detail='Patient not found')
+```
 
 ## Query Parameter: They are optional key-value pairs appended to the end of a URL, used to pass additional data to the server in an HTTP request. They are typically employed for operations like filtering, sorting, searching, and pagination, without altering the endpoint path itself.
     ```bash
@@ -218,12 +282,32 @@ It allows you to:
     • Enforce validation rules
     • Add metadata like description, title, examples
 
-default                 Set default value (e.g., Query(e))
-title                   Displayed in API docs
-description             Detailed explanation in Swagger
-example / examples      Provide sample inputs
-min_length, max_length  Validate string length
-ge, gt, le, it          Validate numeric bounds
-regex                   Pattern match for strings
+| Parameter/Option      | Description                                |
+|-----------------------|--------------------------------------------|
+| `default`             | Set default value (e.g., `Query(e)`)       |
+| `title`               | Displayed in API documentation             |
+| `description`         | Detailed explanation in Swagger UI         |
+| `example` / `examples`| Provide sample input(s)                    |
+| `min_length`, `max_length` | Validate string length                |
+| `ge`, `gt`, `le`, `lt`| Validate numeric bounds                    |
+| `regex`               | Pattern match for string validation        |
+
+```bash
+@app.get('/sort')
+def sort_patients(sort_by: str = Query(..., description='Sort on the basis of height, weight or bmi'), 
+                    order: str = Query('asc', description='sort in asc or desc order')):
+    valid_fields = ['height', 'weight', 'bmi']
+    if sort_by not in valid_fields:
+        raise HTTPException(status_code=400, detail=f'Invalid field select from {valid_fields}')
+    if order not in ['asc', 'desc']:
+        raise HTTPException(status_code=400, detail='Invalid order select between asc and desc')
+    data = load_data()
+    sort_order = True if order=='desc' else False
+    sorted_data = sorted(data.values(), key=lambda x: x.get(sort_by, 0), reverse=sort_order)
+    return sorted_data
+```
+
+A **request body** is the portion of an HTTP request that contains data sent by the client to the server. It is typically used in HTTP methods such as POST, or PUT to transmit structured data (e.g., JSON, XML, form-data) for the purpose of creating or updating resources on the server. The server parses the request body to extract the necessary information and perform the intended
+operation.
 
 ## deployment of API on AWS
