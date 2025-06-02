@@ -267,16 +267,16 @@ def view_patient(patient_id: str = Path(..., description='ID of the patient in t
     raise HTTPException(status_code=404, detail='Patient not found')
 ```
 
-## Query Parameter: They are optional key-value pairs appended to the end of a URL, used to pass additional data to the server in an HTTP request. They are typically employed for operations like filtering, sorting, searching, and pagination, without altering the endpoint path itself.
-    ```bash
-    /patients?city=Delhi&sort_by=age
-    ```
-    • The ? marks the start of query parameters.
-    • Each parameter is a key-value pair: `key=value`
-    • Multiple parameters are separated by `&`
-    In this case:
-        • `city=Delhi` is a query parameter for filtering
-        • `sort_by=age` is a query parameter for sorting
+**Query Parameter** are optional key-value pairs appended to the end of a URL, used to pass additional data to the server in an HTTP request. They are typically employed for operations like filtering, sorting, searching, and pagination, without altering the endpoint path itself.
+```bash
+/patients?city=Delhi&sort_by=age
+```
+• The ? marks the start of query parameters.
+• Each parameter is a key-value pair: `key=value`
+• Multiple parameters are separated by `&`
+In this case:
+    • `city=Delhi` is a query parameter for filtering
+    • `sort_by=age` is a query parameter for sorting
 
 **Query()** is a utility function provided by FastAPI to declare, validate, and document query parameters in your API endpoints.
 
