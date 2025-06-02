@@ -271,19 +271,19 @@ def view_patient(patient_id: str = Path(..., description='ID of the patient in t
 ```bash
 /patients?city=Delhi&sort_by=age
 ```
-• The ? marks the start of query parameters.
-• Each parameter is a key-value pair: `key=value`
-• Multiple parameters are separated by `&`
+- The ? marks the start of query parameters.
+- Each parameter is a key-value pair: `key=value`
+- Multiple parameters are separated by `&`
 In this case:
-    • `city=Delhi` is a query parameter for filtering
-    • `sort_by=age` is a query parameter for sorting
+    - `city=Delhi` is a query parameter for filtering
+    - `sort_by=age` is a query parameter for sorting
 
 **Query()** is a utility function provided by FastAPI to declare, validate, and document query parameters in your API endpoints.
 
 It allows you to:
-    • Set default values
-    • Enforce validation rules
-    • Add metadata like description, title, examples
+    - Set default values
+    - Enforce validation rules
+    - Add metadata like description, title, examples
 
 | Parameter/Option      | Description                                |
 |-----------------------|--------------------------------------------|
