@@ -1,25 +1,13 @@
-from fastapi import FastAPI
-from fastapi.responses import JSONResponse
-from pydantic import BaseModel, Field, computed_field
+from pydantic import BaseModel, Field, computed_field, field_validator
+from config.city_tier import tier_1_cities, tier_2_cities
 from typing import Literal, Annotated
-import pickle
-import pandas as pd
 
-# import the ml model
-with open('model.pkl', 'rb') as f:
-    model = pickle.load(f)
+# In FastAPI, a Response Model defines the structure of the data that your API endpoint will return. It helps in:
+# 1. Generating clean API docs (/docs).
+# 2. Validating output (so your API doesn't return malformed responses).
+# 3. Filtering unnecessary data from the response.
+# NOTE: like we validated user input the same we validate model output send to the user using the Response Model.
 
-app = FastAPI()
-
-tier_1_cities = ["Mumbai", "Delhi", "Bangalore", "Chennai", "Kolkata", "Hyderabad", "Pune"]
-tier_2_cities = [
-    "Jaipur", "Chandigarh", "Indore", "Lucknow", "Patna", "Ranchi", "Visakhapatnam", "Coimbatore",
-    "Bhopal", "Nagpur", "Vadodara", "Surat", "Rajkot", "Jodhpur", "Raipur", "Amritsar", "Varanasi",
-    "Agra", "Dehradun", "Mysore", "Jabalpur", "Guwahati", "Thiruvananthapuram", "Ludhiana", "Nashik",
-    "Allahabad", "Udaipur", "Aurangabad", "Hubli", "Belgaum", "Salem", "Vijayawada", "Tiruchirappalli",
-    "Bhavnagar", "Gwalior", "Dhanbad", "Bareilly", "Aligarh", "Gaya", "Kozhikode", "Warangal",
-    "Kolhapur", "Bilaspur", "Jalandhar", "Noida", "Guntur", "Asansol", "Siliguri"
-]
 
 # pydantic model to validate incoming data
 class UserInput(BaseModel):
@@ -33,6 +21,11 @@ class UserInput(BaseModel):
     occupation: Annotated[Literal['retired', 'freelancer', 'student', 'government_job',
         'business_owner', 'unemployed', 'private_job'], Field(..., description='Occupation of the user')]
     
+    @field_validator('city')
+    @classmethod
+    def normalize_city(cls, v:str) -> str:
+        return v.strip().title()
+
     @computed_field
     @property
     def bmi(self) -> float:
@@ -68,20 +61,3 @@ class UserInput(BaseModel):
             return 2
         else:
             return 3
-
-# here, we are using post method specially when writing ML model or DL model APIs in FastAPI then must use post method
-@app.post('/predict')
-def predict_premium(data: UserInput):
-
-    input_df = pd.DataFrame([{
-        'bmi': data.bmi,
-        'age_group': data.age_group,
-        'lifestyle_risk': data.lifestyle_risk,
-        'city_tier': data.city_tier,
-        'income_lpa': data.income_lpa,
-        'occupation': data.occupation
-    }])
-
-    prediction = model.predict(input_df)[0]
-
-    return JSONResponse(status_code=200, content={'predicted_category': prediction})

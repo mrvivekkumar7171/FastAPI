@@ -1,7 +1,7 @@
 import streamlit as st
 import requests
 
-API_URL = "http://localhost:8000/predict" 
+API_URL = "http://52.66.135.111:8000/predict"
 
 st.title("Insurance Premium Category Predictor")
 
@@ -32,13 +32,21 @@ if st.button("Predict Premium Category"):
 
     try:
         response = requests.post(API_URL, json=input_data)
-        if response.status_code == 200:
-            result = response.json()
-            st.success(f"Predicted Insurance Premium Category: **{result['predicted_category']}**")
+        result = response.json()
+
+        if response.status_code == 200 and "response" in result:
+            prediction = result["response"]
+            st.success(f"Predicted Insurance Premium Category: **{prediction['predicted_category']}**")
+            st.write("🔍 Confidence:", prediction["confidence"])
+            st.write("📊 Class Probabilities:")
+            st.json(prediction["class_probabilities"])
+
         else:
-            st.error(f"API Error: {response.status_code} - {response.text}")
+            st.error(f"API Error: {response.status_code}")
+            st.write(result)
+
     except requests.exceptions.ConnectionError:
-        st.error("Could not connect to the FastAPI server. Make sure it's running on port 8000.")
+        st.error("❌ Could not connect to the FastAPI server. Make sure it's running.")
 
 # to run the app first run the FastAPI server:
 # uvicorn app:app --reload

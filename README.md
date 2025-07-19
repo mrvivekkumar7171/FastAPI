@@ -313,4 +313,67 @@ def sort_patients(sort_by: str = Query(..., description='Sort on the basis of he
 A **request body** is the portion of an HTTP request that contains data sent by the client to the server. It is typically used in HTTP methods such as POST, or PUT to transmit structured data (e.g., JSON, XML, form-data) for the purpose of creating or updating resources on the server. The server parses the request body to extract the necessary information and perform the intended
 operation.
 
-## deployment of API on AWS
+## Steps to create a Docker Image
+1. Install Docker from https://www.docker.com/products/docker-desktop/.
+2. Create account on Docker Hub (https://hub.docker.com/repositories/vivekkumar7171)
+3. Create a Dockerfile in project folder
+4. Build the docker image using
+```bash
+docker build -t vivekkumar7171/fastapi_pydantic_docker .
+```
+5. Login to Docker Hub using (for first time it will ask username and password)
+```bash
+docker login
+```
+6. Push the image to Docker Hub using
+```bash
+docker push vivekkumar7171/fastapi_pydantic_docker
+```
+7. Pull the docker image (in Docker Desktop Terminal)
+```bash
+docker pull vivekkumar7171/fastapi_pydantic_docker:latest
+```
+8. Run the docker image locally using
+```bash
+docker run -d -p 8000:8000 vivekkumar7171/fastapi_pydantic_docker
+```
+#### NOTE: here, -d is used to run the container in detached mode (background) — you get control of your terminal immediately, without -d is used to Runs in foreground — the container’s logs/output are streamed directly to your terminal.
+
+## Correct way to close the Docker Desktop
+1. Stop all running containers:
+```bash
+    docker ps        # check running containers
+    docker stop $(docker ps -q)  # stop all running containers
+```
+
+2. (Optional but recommended) Remove unused containers, networks, volumes, and images:
+```bash
+    docker system prune -a --volumes
+```
+    -a removes all stopped containers and unused images. --volumes clears unused volumes too. ⚠️ Be careful: This removes a lot — only run it if you don’t need old containers/images.
+
+3. Exit Docker Desktop properly:
+    Right-click the Docker icon in the system tray (bottom-right). Select "Quit Docker Desktop". Wait for the vmmem process to terminate in Task Manager.
+
+## Steps for deployment of API on AWS
+1. Create AWS accout if you don't have
+1. create an EC2 instance (EC2 > instances > Launch instances > name it (fastapi_pydantic_docker) > select OS as Ubuntu > t2.micro for free tier > select Key pair name required to connect locally > make sure SSH is selected and Anywhere (0.0.0.0/0) > storage size 8 bg > Launch instance)
+2. Connect to the EC2 instance (EC2 > instances > Instance ID > Connect > Connect)
+3. Run the following commands
+```bash
+    sudo apt-get update # to update EC2 instance packages
+    sudo apt-get install -y docker.io # installing docker on EC2 instance
+    sudo systemctl start docker # to start the docker on EC2 instance
+    sudo docker # to confirm the docker is started or not.
+    sudo systemctl enable docker # to run the docker automatically when the EC2 instance start # helps when EC2 instance went down and restarted unknowingly
+    sudo usermod -aG docker $USER # giving docker to download Docker Image from external source and run them.
+    exit
+```
+4. Restart a new connection to EC2 instance
+5. Run the following commands
+```bash
+    docker pull vivekkumar7171/fastapi_pydantic_docker:latest
+    docker run -p 8000:8000 vivekkumar7171/fastapi_pydantic_docker
+```
+6. change security group settings (EC2 > Security > Security group > Edit Inbound rules > Add rule > fill Custom TCP, 8000, 0.0.0.0/0 > Save rules)
+7. Check the API at http://52.66.135.111:8000/ where 52.66.135.111(IP address can be found EC2 > Instances > Instance ID > Public IPv4 address)
