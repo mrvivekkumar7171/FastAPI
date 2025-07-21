@@ -1,3 +1,7 @@
+'''
+Python Script to load a pre-trained machine learning model and defines a function to make predictions based on user input.
+'''
+
 import pickle
 import pandas as pd
 

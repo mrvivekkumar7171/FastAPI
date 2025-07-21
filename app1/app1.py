@@ -1,3 +1,6 @@
+'''A fully functional Patient Management System using FastAPI to Create, Read, Update, Delete (CRUD) patient records using a local JSON file (app1_patients.json) as storage.
+'''
+
 from fastapi import FastAPI, Path, HTTPException, Query
 from pydantic import BaseModel, Field, computed_field
 from typing import Annotated, Literal, Optional
@@ -43,12 +46,12 @@ class PatientUpdate(BaseModel): # new pydentic model is required for updating as
     weight: Annotated[Optional[float], Field(default=None, gt=0)]
 
 def load_data():
-    with open('patients.json', 'r') as f:
+    with open('app1_patients.json', 'r') as f:
         data = json.load(f)
     return data
 
 def save_data(data):
-    with open('patients.json', 'w') as f:
+    with open('app1_patients.json', 'w') as f:
         json.dump(data, f)
 
 @app.get("/")

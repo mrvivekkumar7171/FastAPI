@@ -1,7 +1,11 @@
+'''
+A Pydantic model for validating and structuring the output of a machine learning prediction.
+'''
+
 from pydantic import BaseModel, Field
 from typing import Dict
 
-class PredictionResponse(BaseModel):
+class ModelOutput(BaseModel):
     predicted_category: str = Field(
         ...,
         description="The predicted insurance premium category",

@@ -1,4 +1,7 @@
-# NOTE: make the API organize by loading the ML model and logic/FAST API code/Pydantic model/ City Tier in different file.
+'''
+City tier configuration for Indian cities (tier_1_cities and tier_2_cities).
+'''
+
 tier_1_cities = ["Mumbai", "Delhi", "Bangalore", "Chennai", "Kolkata", "Hyderabad", "Pune"]
 tier_2_cities = [
     "Jaipur", "Chandigarh", "Indore", "Lucknow", "Patna", "Ranchi", "Visakhapatnam", "Coimbatore",

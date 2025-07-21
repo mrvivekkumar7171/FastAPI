@@ -14,7 +14,7 @@ Most companies prefer FastAPI for deploying ML models due to its:
 Speed (based on asynchronous programming)
 Easy integration with Python-based ML workflows
 Automatic generation of interactive API documentation (via Swagger UI)
-Built-in validation and error handling using Pydentic
+Built-in validation and error handling using pydantic
 Fast development and testing processs
 All these benefits make FastAPI ideal for modern, scalable ML applications.
 
@@ -45,7 +45,7 @@ For example, OpenAI's ChatGPT model is accessible through an API—developers ca
 ![API on multiple platform](images/image-2.png)
 
 ## What is fastAPI?
-FastAPI is a modern, high-performance web framework for building APIs with Python. It is made using two most popular libraries Starlette (manages how your API receives requests and sends back responses) and Pydentic(data validation library to check if the data incoming into your API is correct and in the right format).
+FastAPI is a modern, high-performance web framework for building APIs with Python. It is made using two most popular libraries Starlette (manages how your API receives requests and sends back responses) and pydantic(data validation library to check if the data incoming into your API is correct and in the right format).
 
 ## Objectives of FastAPI?
 - Fast to run and handle concurrent users
@@ -108,7 +108,7 @@ async def predict(data: InputData):
 ```
 
 ## Why FastAPI is fast to code?
-1. Automatic Input Validation using Pydentic
+1. Automatic Input Validation using pydantic
 2. Auto-Generated Interactive Documentation
 3. Seamless Integration with Modern Ecosystem (ML/DL libraries, OAuth, JWT, SQL Alchemy, Docker, Kubernetes etc.)
 
@@ -128,7 +128,7 @@ def greet(name: str):
 ```
 - To run the FastAPI you need to install the required libraries:
 ```bash
-pip install fastapi uvicorn pydentic
+pip install fastapi uvicorn pydantic
 ```
 - To run the app, use the command in the terminal instead of running the python file:
 ```bash
@@ -223,7 +223,7 @@ Example:
 
 **HTTP status codes** are 3-digit numbers returned by a web server (like FastAPI) to indicate the result of a client's request (like from a browser or API consumer).
 
-![alt text](image.png)
+![alt text](images/image-7.png)
 
 They help the client (browser, frontend, mobile app, etc.) understand:
     - whether the request was successful,
@@ -313,29 +313,198 @@ def sort_patients(sort_by: str = Query(..., description='Sort on the basis of he
 A **request body** is the portion of an HTTP request that contains data sent by the client to the server. It is typically used in HTTP methods such as POST, or PUT to transmit structured data (e.g., JSON, XML, form-data) for the purpose of creating or updating resources on the server. The server parses the request body to extract the necessary information and perform the intended
 operation.
 
+---
+
+# Pydantic
+1. Define a Pydantic model that represents the ideal schema of the data.
+- This includes the expected fields, their types, and any validation constraints (e.g., gt=0 for positive numbers).
+2. Instantiate the model with raw input data (usually a dictionary or JSON-like structure).
+- Pydantic will automatically validate the data and coerce it into the correct Python types (if possible).
+- If the data doesn't meet the model's requirements, Pydantic raises a ValidationError.
+3. Pass the validated model object to functions or use it throughout your codebase.
+- This ensures that every part of your program works with clean, type-safe, and logically valid data.
+
+<!-- Use 2nd version of Pydantic as it is very fast, instead using 1st version-->
+
+
+
+
+---
+
+# What is Docker?
+Docker is a platform designed to help developers build, share, and run container applications.
+
+## Why do we need dockers?
+**Consistency Across Environments**
+    • **Problem**: Applications often behave differently in development, testing, and production environments due to variations in configurations, dependencies, and infrastructure.
+    • **Solution**: Docker containers encapsulate all the necessary components, ensuring the application runs consistently across all environments.
+**Isolation**
+    • **Problem**: Running multiple applications on the same host can lead to conflicts, such as dependency clashes or resource contention.
+    • **Solution**: Docker provides isolated environments for each application, preventing interference and ensuring stable performance.
+**Scalability**
+    • **Problem**: Scaling applications to handle increased load can be challenging, requiring manual intervention and configuration.
+    • **Solution**: Docker makes it easy to scale applications horizontally by running multiple container instances, allowing for quick and efficient scaling.
+
+## How exactly Docker is used?
+
+![Working of Docker](images/image-1.png)
+
+## Docker Engine
+the core component of the Docker platform, responsible for creating, running, and managing Docker containers. It serves as the runtime that powers Docker's containerization capabilities. Here’s an in-depth look at the Docker Engine:
+
+![Docker Engine](images/image-2.png)
+
+## Components of Docker Engine
+1. **Docker Daemon (dockerd)**:
+    **Function**: The Docker daemon is the background service running on the host machine. It manages Docker objects such as images, containers, networks, and volumes.
+    **Interaction**: It listens for Docker API requests and processes them, handling container lifecycle operations (start, stop, restart, etc.).
+2. **Docker CLI (docker)**:
+    **Function**: The Docker Command Line Interface (CLI) is the tool that users interact with to communicate with the Docker daemon.
+    **Usage**: Users run Docker commands through the CLI to perform tasks like building images, running containers, and managing Docker resources.
+3. **REST API**:
+    **Function**: The Docker REST API allows communication between the Docker CLI and the Docker daemon. It also enables programmatic interaction with Docker.
+    **Usage**: Developers can use the API to automate Docker operations or integrate Docker functionality into their applications.
+
+## Docker Image: 
+A Docker image is a lightweight, stand-alone, and executable software package that includes everything needed to run a piece of software, such as the code, runtime, libraries, environment variables, and configuration files. Images are used to create Docker containers, which are instances of these images. To reduce the size of Docker Image remove the unnecessary libraries from the requirement.txt.
+
+### Components of a Docker Image
+1. **Base Image**: The starting point for building an image. It could be a minimal OS image like alpine, a full-fledged OS like ubuntu, or even another application image like python or node.
+2. **Application Code**: The actual code and files necessary for the application to run.
+3. **Dependencies**: Libraries, frameworks, and packages required by the application.
+4. **Metadata**: Information about the image, such as environment variables, labels, and exposed ports.
+
+### Docker Image Lifecycle
+1. **Creation**: Images are created using the docker build command, which processes the instructions in a Dockerfile to create the image layers.
+2. **Storage**: Images are stored locally on the host machine. They can also be pushed to and pulled from Docker registries like Docker Hub, AWS ECR, or Google Container Registry.
+3. **Distribution**: Images can be shared by pushing them to a Docker registry, allowing others to pull and use the same image.
+4. **Execution**: Images are executed by running containers, which are instances of these images.
+
+
+## Dockerfile
+A Dockerfile is a text file that contains a series of instructions used to build a Docker image. Each instruction in a Dockerfile creates a layer in the image, allowing for efficient image creation and reuse of layers. Dockerfiles are used to automate the image creation process, ensuring consistency and reproducibility.
+
+### Key Components of a Dockerfile
+1. **Base Image (FROM)** - Specifies the starting point for the image, which could be a minimal operating system, a specific version of a language runtime, or another image. Example: FROM ubuntu:20.04
+2. **Labels (LABEL)** - Adds metadata to the image, such as version, description, or maintainer. Example: LABEL version="1.0" description="My application"
+3. **Run Commands (RUN)** - Executes commands in the image during the build process, typically used to install software packages. Example: RUN apt-get update && apt-get install -y python3
+4. **Copy Files (COPY)** - Copies files or directories from the host system to the image. Example: COPY . /app
+5. **Environment Variables (ENV)** - Sets environment variables in the image. Example: ENV PATH /app/bin:$PATH
+6. **Work Directory (WORKDIR)** - Sets the working directory for subsequent instructions. Example: WORKDIR /app
+7. **Expose Ports (EXPOSE)** - Informs Docker that the container listens on specified network ports. Example: EXPOSE 8080
+8. **Command (CMD)** - Provides a default command to run when the container starts. Example: CMD ["python", "app.py"]
+9. **Volume (VOLUME)** - Creates a mount point with a specified path and marks it as holding externally mounted volumes from the host or other containers. Example: VOLUME ["/data"]
+10. **Arguments (ARG)** - Defines build-time variables. Example: ARG VERSION=1.0
+
+```Dockerfile
+    # Use an official Python runtime as a base image 
+    FROM python:3.8-slim
+
+    # Set the working directory in the container 
+    WORKDIR /app
+
+    # Copy the current directory contents into the container at /app 
+    COPY . /app
+
+    # Install any needed packages specified in requirements.txt 
+    RUN pip install --no-cache-dir -r requirements.txt
+
+    # Make port 80 available to the world outside this container 
+    EXPOSE 8000
+
+    # Define environment variable
+    ENV NAME World
+
+    # Run app.py when the container launches
+    CMD ["python", "app.py"]
+```
+
+## Docker Container
+A Docker container is a lightweight, portable, and isolated environment that encapsulates an application and its dependencies, allowing it to run consistently across different computing environments. Containers are created from Docker images, which are immutable and contain all the necessary components for the application to run.
+
+## Registry
+A Docker registry is a service that stores and distributes Docker images. It acts as a repository where users can push, pull, and manage Docker images. Docker Hub is the most well-known public registry, but private registries can also be set up to securely store and manage images within an organization.
+
+### Key Components of a Docker Registry
+1. **Repositories**: A repository is a collection of related Docker images, typically different versions of the same application. Each repository can hold multiple tags, representing different versions of an image.
+2. **Tags**: Tags are used to version images within a repository. For example, myapp:1.0, myapp:2.0, and myapp:latest are tags for different versions of the myapp image.
+
+### Types of Docker Registries
+1. **Docker Hub**:
+- **Description**: The default public registry provided by Docker, which hosts a vast number of public images and also supports private repositories.
+- **URL**: hub.docker.com
+- **Use Case**: Publicly sharing images and accessing a large collection of pre-built images from the community and official repositories.
+2. **Private Registries**:
+- **Description**: Custom registries set up by organizations to securely store and manage  their own Docker images.
+- **Use Case**: Ensuring security and control over image distribution within an organization.
+3. **Third-Party Registries**:
+- **Examples**: Amazon Elastic Container Registry (ECR), Google Container Registry (GCR), Azure Container Registry (ACR).
+- **Use Case**: Integrating with cloud platforms for seamless deployment and management of images within cloud infrastructure.
+
+### Benefits of Using Docker Registries
+1. **Centralized Image Management**: Registries provide a centralized location to store and
+manage Docker images, making it easier to organize and distribute them.
+2. **Version Control**: Using tags, registries allow version control of images, enabling users to
+easily roll back to previous versions if needed.
+3. **Collaboration**: Public registries like Docker Hub facilitate collaboration by allowing users
+to share images with the community or within teams.
+4. **Security**: Private registries ensure that sensitive images are stored securely and access is
+controlled within an organization.
+5. **Integration with CI/CD**: Registries integrate seamlessly with CI/CD pipelines, automating
+the process of building, storing, and deploying Docker images.
+
+### Use-cases
+**Microservices Architecture**
+- **Description**: Microservices break down applications into smaller, independent services, each running in its own container.
+- **Benefits**: Simplifies deployment, scaling, and maintenance. Each service can be developed, updated, and deployed independently.
+
+**Continuous Integration and Continuous Deployment (CI/CD)**
+- **Description**: Docker ensures a consistent environment from development through testing to production.
+- **Benefits**: Streamlines the CI/CD pipeline, reduces discrepancies between environments, and speeds up testing and deployment processes.
+
+**Cloud Migration**
+- **Description**: Containerizing applications to move them to the cloud.
+- **Benefits**: Simplifies the migration process, allows applications to run consistently across different cloud providers, and optimizes resource usage.
+
+**Scalable Web Applications**
+- **Description**: Deploying web applications in containers for easy scaling.
+- **Benefits**: Simplifies scaling up or down based on traffic, ensures consistent deployment, and enhances resource utilization.
+
+**Testing and QA**
+- **Description**: Creating consistent environments for testing applications.
+- **Benefits**: Ensures tests are run in environments identical to production, speeds up the setup of test environments, and facilitates automated testing.
+
+**Machine Learning and AI**
+- **Description**: Deploying machine learning models and AI applications in containers.
+- **Benefits**: Ensures consistency in the runtime environment, simplifies scaling of model training and inference, and facilitates collaboration and reproducibility.
+
+**API Development and Deployment**
+- **Description**: Developing and deploying APIs in containers.
+- **Benefits**: Ensures APIs run consistently across environments, simplifies scaling, and improves deployment speed and reliability.
+
 ## Steps to create a Docker Image
 1. Install Docker from https://www.docker.com/products/docker-desktop/.
 2. Create account on Docker Hub (https://hub.docker.com/repositories/vivekkumar7171)
 3. Create a Dockerfile in project folder
 4. Build the docker image using
 ```bash
-docker build -t vivekkumar7171/fastapi_pydantic_docker .
+    docker build -t vivekkumar7171/fastapi_pydantic_docker .
 ```
 5. Login to Docker Hub using (for first time it will ask username and password)
 ```bash
-docker login
+    docker login
 ```
 6. Push the image to Docker Hub using
 ```bash
-docker push vivekkumar7171/fastapi_pydantic_docker
+    docker push vivekkumar7171/fastapi_pydantic_docker
 ```
 7. Pull the docker image (in Docker Desktop Terminal)
 ```bash
-docker pull vivekkumar7171/fastapi_pydantic_docker:latest
+    docker pull vivekkumar7171/fastapi_pydantic_docker:latest
 ```
 8. Run the docker image locally using
 ```bash
-docker run -d -p 8000:8000 vivekkumar7171/fastapi_pydantic_docker
+    docker run -d -p 8000:8000 vivekkumar7171/fastapi_pydantic_docker
 ```
 #### NOTE: here, -d is used to run the container in detached mode (background) — you get control of your terminal immediately, without -d is used to Runs in foreground — the container’s logs/output are streamed directly to your terminal.
 
@@ -377,3 +546,38 @@ docker run -d -p 8000:8000 vivekkumar7171/fastapi_pydantic_docker
 ```
 6. change security group settings (EC2 > Security > Security group > Edit Inbound rules > Add rule > fill Custom TCP, 8000, 0.0.0.0/0 > Save rules)
 7. Check the API at http://52.66.135.111:8000/ where 52.66.135.111(IP address can be found EC2 > Instances > Instance ID > Public IPv4 address)
+
+
+## Project 1 (Insurance Premium Category Prediction API): 
+To provide a user-friendly interface for predicting a person’s insurance premium category based on their health, income, and lifestyle data by communicating with a machine learning model served via FastAPI. To test the app, first run the app.py(FastAPI server)/run the docker image locally/deploy the docker image on cloud(AWS), then update the API address in the fronend.py then run the frontend.py(Streamlit app)
+```bash
+    uvicorn app:app --reload
+```
+```bash
+    streamlit run frontend.py
+```
+├── app.py                  <- FastAPI for predicting insurance premium categories.
+├── requirements.txt        <- Lists all Python dependencies needed to run the application.
+├── Dockerfile              <- Scripts to to build a Docker image for the application.
+├── schema                  <- Pydantic model to validate the input and output data.
+│   │
+│   ├── user_input.py               <- Pydantic model for validating the input from an user.
+│   │
+│   └── prediction_response.py      <- Pydantic model for validating and structuring the output.
+│
+├── models                  <- ML model folder.
+│   │
+│   ├── model.pkl                   <- ML model to make prediction.
+│   │
+│   └── predict.py                  <- Scripts to load a pre-trained ML model and make predictions.
+│
+├── config                  <- Configuration requirements to run the app.
+│   │
+│   └── city_tier.py                <- City tier configuration for Indian cities.
+│
+└── visualize.py
+# Project 2 (Patient Management System API):
+A fully functional Patient Management System using FastAPI to Create, Read, Update, Delete (CRUD) patient records using a local JSON file (patients.json) as storage. To run this just run the below command(no frontend).
+```bash
+    uvicorn app1:app --reload
+```
