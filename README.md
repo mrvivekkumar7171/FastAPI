@@ -524,19 +524,25 @@ Docker is a platform designed to help developers build, share, and run container
 ![Working of Docker](images/image-1.png)
 
 ## Docker Engine
-the core component of the Docker platform, responsible for creating, running, and managing Docker containers. It serves as the runtime that powers Docker's containerization capabilities. Here’s an in-depth look at the Docker Engine:
+The core component of the Docker platform, responsible for creating, running, and managing Docker containers. It serves as the runtime that powers Docker's containerization capabilities. Here’s an in-depth look at the Docker Engine:
 
 ![Docker Engine](images/image-2.png)
 
 ## Components of Docker Engine
 1. **Docker Daemon (dockerd)**:
+
 **Function**: The Docker daemon is the background service running on the host machine. It manages Docker objects such as images, containers, networks, and volumes.
+
 **Interaction**: It listens for Docker API requests and processes them, handling container lifecycle operations (start, stop, restart, etc.).
 2. **Docker CLI (docker)**:
+
 **Function**: The Docker Command Line Interface (CLI) is the tool that users interact with to communicate with the Docker daemon.
+
 **Usage**: Users run Docker commands through the CLI to perform tasks like building images, running containers, and managing Docker resources.
 3. **REST API**:
+
 **Function**: The Docker REST API allows communication between the Docker CLI and the Docker daemon. It also enables programmatic interaction with Docker.
+
 **Usage**: Developers can use the API to automate Docker operations or integrate Docker functionality into their applications.
 
 ## Docker Image: 
