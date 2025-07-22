@@ -481,6 +481,7 @@ To provide a user-friendly interface for predicting a person’s insurance premi
 ```bash
     streamlit run frontend.py
 ```
+```bash
 ├── app.py                  <- FastAPI for predicting insurance premium categories.
 ├── requirements.txt        <- Lists all Python dependencies needed to run the application.
 ├── Dockerfile              <- Scripts to to build a Docker image for the application.
@@ -501,7 +502,7 @@ To provide a user-friendly interface for predicting a person’s insurance premi
 │   └── city_tier.py                <- City tier configuration for Indian cities.
 │
 └── visualize.py
-
+```
 ---
 
 # What is Docker?
@@ -529,14 +530,14 @@ the core component of the Docker platform, responsible for creating, running, an
 
 ## Components of Docker Engine
 1. **Docker Daemon (dockerd)**:
-    **Function**: The Docker daemon is the background service running on the host machine. It manages Docker objects such as images, containers, networks, and volumes.
-    **Interaction**: It listens for Docker API requests and processes them, handling container lifecycle operations (start, stop, restart, etc.).
+**Function**: The Docker daemon is the background service running on the host machine. It manages Docker objects such as images, containers, networks, and volumes.
+**Interaction**: It listens for Docker API requests and processes them, handling container lifecycle operations (start, stop, restart, etc.).
 2. **Docker CLI (docker)**:
-    **Function**: The Docker Command Line Interface (CLI) is the tool that users interact with to communicate with the Docker daemon.
-    **Usage**: Users run Docker commands through the CLI to perform tasks like building images, running containers, and managing Docker resources.
+**Function**: The Docker Command Line Interface (CLI) is the tool that users interact with to communicate with the Docker daemon.
+**Usage**: Users run Docker commands through the CLI to perform tasks like building images, running containers, and managing Docker resources.
 3. **REST API**:
-    **Function**: The Docker REST API allows communication between the Docker CLI and the Docker daemon. It also enables programmatic interaction with Docker.
-    **Usage**: Developers can use the API to automate Docker operations or integrate Docker functionality into their applications.
+**Function**: The Docker REST API allows communication between the Docker CLI and the Docker daemon. It also enables programmatic interaction with Docker.
+**Usage**: Developers can use the API to automate Docker operations or integrate Docker functionality into their applications.
 
 ## Docker Image: 
 A Docker image is a lightweight, stand-alone, and executable software package that includes everything needed to run a piece of software, such as the code, runtime, libraries, environment variables, and configuration files. Images are used to create Docker containers, which are instances of these images. To reduce the size of Docker Image remove the unnecessary libraries from the requirement.txt.
@@ -603,15 +604,15 @@ A Docker registry is a service that stores and distributes Docker images. It act
 
 ### Types of Docker Registries
 1. **Docker Hub**:
-- **Description**: The default public registry provided by Docker, which hosts a vast number of public images and also supports private repositories.
-- **URL**: hub.docker.com
-- **Use Case**: Publicly sharing images and accessing a large collection of pre-built images from the community and official repositories.
+    - **Description**: The default public registry provided by Docker, which hosts a vast number of public images and also supports private repositories.
+    - **URL**: hub.docker.com
+    - **Use Case**: Publicly sharing images and accessing a large collection of pre-built images from the community and official repositories.
 2. **Private Registries**:
-- **Description**: Custom registries set up by organizations to securely store and manage  their own Docker images.
-- **Use Case**: Ensuring security and control over image distribution within an organization.
+    - **Description**: Custom registries set up by organizations to securely store and manage  their own Docker images.
+    - **Use Case**: Ensuring security and control over image distribution within an organization.
 3. **Third-Party Registries**:
-- **Examples**: Amazon Elastic Container Registry (ECR), Google Container Registry (GCR), Azure Container Registry (ACR).
-- **Use Case**: Integrating with cloud platforms for seamless deployment and management of images within cloud infrastructure.
+    - **Examples**: Amazon Elastic Container Registry (ECR), Google Container Registry (GCR), Azure Container Registry (ACR).
+    - **Use Case**: Integrating with cloud platforms for seamless deployment and management of images within cloud infrastructure.
 
 ### Benefits of Using Docker Registries
 1. **Centralized Image Management**: Registries provide a centralized location to store and
@@ -678,7 +679,7 @@ the process of building, storing, and deploying Docker images.
 ```bash
     docker run -d -p 8000:8000 vivekkumar7171/fastapi_pydantic_docker
 ```
-#### NOTE: here, -d is used to run the container in detached mode (background) — you get control of your terminal immediately, without -d is used to Runs in foreground — the container’s logs/output are streamed directly to your terminal.
+ NOTE: here, -d is used to run the container in detached mode (background) — you get control of your terminal immediately, without -d is used to Runs in foreground — the container’s logs/output are streamed directly to your terminal.
 
 ## Correct way to close the Docker Desktop
 1. Stop all running containers:
@@ -691,14 +692,14 @@ the process of building, storing, and deploying Docker images.
 ```bash
     docker system prune -a --volumes
 ```
-    -a removes all stopped containers and unused images. --volumes clears unused volumes too. ⚠️ Be careful: This removes a lot — only run it if you don’t need old containers/images.
+Here, -a removes all stopped containers and unused images. --volumes clears unused volumes too. ⚠️ Be careful: This removes a lot — only run it if you don’t need old containers/images.
 
 3. Exit Docker Desktop properly:
     Right-click the Docker icon in the system tray (bottom-right). Select "Quit Docker Desktop". Wait for the vmmem process to terminate in Task Manager.
 
 ## Steps for deployment of API on AWS
 1. Create AWS accout if you don't have
-1. create an EC2 instance (EC2 > instances > Launch instances > name it (fastapi_pydantic_docker) > select OS as Ubuntu > t2.micro for free tier > select Key pair name required to connect locally > make sure SSH is selected and Anywhere (0.0.0.0/0) > storage size 8 bg > Launch instance)
+1. Create an EC2 instance (EC2 > instances > Launch instances > name it (fastapi_pydantic_docker) > select OS as Ubuntu > t2.micro for free tier > select Key pair name required to connect locally > make sure SSH is selected and Anywhere (0.0.0.0/0) > storage size 8 bg > Launch instance)
 2. Connect to the EC2 instance (EC2 > instances > Instance ID > Connect > Connect)
 3. Run the following commands
 ```bash
@@ -716,5 +717,5 @@ the process of building, storing, and deploying Docker images.
     docker pull vivekkumar7171/fastapi_pydantic_docker:latest
     docker run -p 8000:8000 vivekkumar7171/fastapi_pydantic_docker
 ```
-6. change security group settings (EC2 > Security > Security group > Edit Inbound rules > Add rule > fill Custom TCP, 8000, 0.0.0.0/0 > Save rules)
+6. Change security group settings (EC2 > Security > Security group > Edit Inbound rules > Add rule > fill Custom TCP, 8000, 0.0.0.0/0 > Save rules)
 7. Check the API at http://52.66.135.111:8000/ where 52.66.135.111(IP address can be found EC2 > Instances > Instance ID > Public IPv4 address)
