@@ -90,7 +90,7 @@ Content-Type: application/json
 
 ## Flask VS FastAPI:
 In Flask, we use WSGI(Web Server Gateway Interface) by the name of Gunicorn as SGI which is Synchronous Endpoint. Its synchronous nature (one request at a time) and blocking architecture can lead to slower request processing and scalability challenges. It uses Werkzeug.
-```bash
+```python
 @app.route("/predict", methods=["POST"])
 def predict():
     json_data = request.get_json()
@@ -100,7 +100,7 @@ def predict():
 ```
 In FastAPI, we use ASGI(Asynchronous Server Gateway Interface) by the name of uvicorn as SGI which is Asynchronous Endpoint. It can process multiple request concurrently and provide high performance. It uses Starlette.
 Here, if predict_async(data) will take longer time and new request came then function predict will process the next one without waiting for the output of the first one.
-```bash
+```python
 @app.post("/predict")
 async def predict(data: InputData):
     result = await predict_async(data)
@@ -113,7 +113,7 @@ async def predict(data: InputData):
 3. Seamless Integration with Modern Ecosystem (ML/DL libraries, OAuth, JWT, SQL Alchemy, Docker, Kubernetes etc.)
 
 ## Example of Basic FastAPI:
-```bash
+```python
 from fastapi import FastAPI
 
 app = FastAPI()
@@ -152,7 +152,7 @@ There are two types of websites(softwares):
 - Four operations(**CRUD**) performed in Dynamic Software are:
 
 **Create**: **POST**
-```bash
+```python
 @app.post('/create')
 def create_patient(patient: Patient):
     # load existing data
@@ -167,14 +167,14 @@ def create_patient(patient: Patient):
     return JSONResponse(status_code=201, content={'message':'patient created successfully'})
 ```
 **Retrieve**: **GET**
-```bash
+```python
 @app.get("/view")
 def view():
     data = load_data()
     return data
 ```
 **Update**: **PUTs**
-```bash
+```python
 @app.put('/edit/{patient_id}')
 def update_patient(patient_id: str, patient_update: PatientUpdate):
     data = load_data()
@@ -196,7 +196,7 @@ def update_patient(patient_id: str, patient_update: PatientUpdate):
     return JSONResponse(status_code=200, content={'message':'patient updated'})
 ```
 **Delete**: **DELETE**
-```bash
+```python
 @app.delete('/delete/{patient_id}')
 def delete_patient(patient_id: str):
     # load data
@@ -257,7 +257,7 @@ Instead of returning a normal JSON or crashing the server, you can gracefully ra
 - (optional) extra headers
 
 Example of HTTPException, HTTP status codes and Path Parameters.
-```bash
+```python
 @app.get('/patient/{patient_id}')
 def view_patient(patient_id: str = Path(..., description='ID of the patient in the DB', example='P001')):
     # load all the patients
@@ -295,7 +295,7 @@ It allows you to:
 | `ge`, `gt`, `le`, `lt`| Validate numeric bounds                    |
 | `regex`               | Pattern match for string validation        |
 
-```bash
+```python
 @app.get('/sort')
 def sort_patients(sort_by: str = Query(..., description='Sort on the basis of height, weight or bmi'), 
                     order: str = Query('asc', description='sort in asc or desc order')):
@@ -315,7 +315,10 @@ operation.
 
 ---
 
-# Pydantic
+# What is Pydantic?
+Pydantic is a Python library used for data validation and settings management using Python type annotations. It enforces type hints at runtime and provides user-friendly errors when data is invalid. It is widely used with FastAPI to validate request and response data automatically and ensure clean, well-defined schemas.
+
+## Pydantic Model and its working :
 1. Define a Pydantic model that represents the ideal schema of the data.
 - This includes the expected fields, their types, and any validation constraints (e.g., gt=0 for positive numbers).
 2. Instantiate the model with raw input data (usually a dictionary or JSON-like structure).
@@ -323,11 +326,181 @@ operation.
 - If the data doesn't meet the model's requirements, Pydantic raises a ValidationError.
 3. Pass the validated model object to functions or use it throughout your codebase.
 - This ensures that every part of your program works with clean, type-safe, and logically valid data.
+NOTE: Use Pydantic v2 as it is significantly faster and more feature-rich compared to v1.
 
-<!-- Use 2nd version of Pydantic as it is very fast, instead using 1st version-->
+## Response Model in FastAPI
+In FastAPI, a Response Model defines the structure of the data that your API endpoint will return. It helps in:
+1. Generating clean API docs (/docs).
+2. Validating output (so your API doesn't return malformed responses).
+3. Filtering out unnecessary or extra data from the response.
+NOTE: Just like we validate user input, we also validate model output sent to the user using the Response Model.
 
+## Pydantic Components and Keywords:
 
+**BaseModel** : The base class for all Pydantic models. Used to define schema and validation logic.
 
+**Nested Models** : 
+If you have complex data structures, you can define nested Pydantic models to represent them. TThis provides:
+- Better organization of related data
+- Reusability of common structures
+- Improved readability
+- Validation of deeply structured or related data. 
+
+```python
+    # Example of Base Model and Nested model to validate address.
+    class Adddress(BaseModel):
+        city: Annotated[Optional[str], Field(default='Aya Nagar', description='City of the user')]
+        state: Annotated[Optional[str], Field(default='New Delhi', description='State of the user')]
+        pin: Annotated[Optional[int], Field(default=110047, description='PIN of the user')]
+
+    class UserInput(BaseModel):
+        .
+        .
+        .
+        Adddress: Optional[Adddress] 
+```
+
+**Annotated** : Combines a type annotation with metadata (e.g., Field for validation and documentation).
+```python
+    age: Annotated[int, Field(gt=0, lt=120, description="Age of the user")]
+```
+
+**Optional** : Marks a field as not required. Fields are required by default unless a default is provided or wrapped in Optional.
+```python
+    from typing import Optional
+    email: Optional[str]
+```
+
+**Field** : Used with Annotated to provide validation and documentation metadata.
+```python
+    age: Annotated[int, Field(gt=0, description="Age must be positive")]
+```
+
+**Literal** : Used to restrict a value to a fixed set of choices.
+```python
+    from typing import Literal
+    status: Literal["active", "inactive"]
+```
+
+**EmailStr** : Built-in type that validates that the value is a valid email address.
+
+**AnyUrl** : Built-in type that validates that the value is a valid URL.
+
+**List** : Used to define a list of a specific type.
+```python
+    from typing import List
+    allergies: List[str]  # A list of strings
+```
+
+**Dict** : Validates dictionary keys and values.
+```python
+    from typing import Dict
+    contact_details: Dict[str, str]
+```
+
+**strict** : Pydantic automatically converts '30' to 30. Using strict=True avoids automatic type conversion.
+```python
+        weight: Annotated[float, Field(..., gt=0, strict=True, description='Weight of the user')]
+```
+
+**computed_field** : Used to define fields computed from other fields. The name of the new computed field is same as the function name. Here, it is bmi.
+```python
+    @computed_field
+    @property
+    def bmi(self) -> float:
+        return round(self.weight/(self.height**2),2)
+```
+
+**field_validator** : Apply custom validation to a field.
+```python
+    # Example of applying customer validation on emaild fields to be from one specific companies.
+    @field_validator('email')
+        @classmethod
+        def validate_email(cls, v: EmailStr) -> EmailStr:
+            valid_domains = ['hdfc.com','icici.com','sbi.com','axisbank.com','canarabank.com']
+            domain_name = v.split('@')[-1]
+            if domain_name not in valid_domains:
+                raise ValueError(f"Email domain must be one of {valid_domains}")
+            return v.strip().lower()
+```
+
+**model_validator** : Used to perform validation on whole model after all fields are validated.
+```python
+    @model_validator(mode='after')
+    def age_income_validator(cls,model):
+        if model.age > 60 and model.income_lpa < 1000000:
+            raise ValueError('Client above 60 years must have income more than 10 lpa')
+        return model
+```
+
+**mode** : Controls the timing of validation in field_validator.
+- mode='before': Runs before type coercion(output will be of before field validation. If input is '30' then output will be error of '< is not supported between int and str).
+- mode='after' (default): Runs after coercion(output will be of after field validation. If input is '30' then output will be the value or Value error based on the condition 0 < v < 100).
+```python
+    @field_validator('age', mode='before')
+        def validate_age(cls, v):
+            if not (0 < v < 100):
+                raise ValueError('Age must be between 1 and 99')
+            return v
+```
+
+## Creating a Model Instance
+```python
+    UserInput(**data)
+    # is equivalent to:
+    UserInput(age=data['age'], weight=data['weight'], height=data['height'], income_lpa=data['income_lpa'], smoker=data['smoker'], city=data['city'], occupation=data['occupation'],name=data['name'], married=data['married'], allergies=data['allergies'], contact_details=data['contact_details'], email=data['email'], linkedin_url=data['linkedin_url'], Adddress=Adddress(**data['Adddress']))
+```
+
+## Dictionary Conversion with .model_dump()
+```python
+    temp = user1.model_dump() # dictionary with all fields
+    temp = user1.model_dump(include=['age', 'weight']) # only age and weight
+    temp = user1.model_dump(exclude=['age', 'weight']) # all fields except age, weight
+    temp = user1.model_dump(exclude={'address':['state']}) # exclude nested 'state'
+    temp = user1.model_dump(exclude_unset=True) # only fields that were set by user (not default)
+    print(type(temp)) # <class 'dict'>
+```
+
+## JSON Conversion with .model_dump_json()
+```python
+    temp = user1.model_dump_json() # serialized as JSON string (visible as str in type())
+    print(type(temp)) # <class 'str'>
+```
+
+### Example 1 (Patient Management System API):
+A fully functional Patient Management System using FastAPI to Create, Read, Update, Delete (CRUD) patient records using a local JSON file (patients.json) as storage. To run this just run the below command(no frontend).
+```bash
+    uvicorn app1:app --reload
+```
+
+### Example 2 (Insurance Premium Category Prediction API): 
+To provide a user-friendly interface for predicting a person’s insurance premium category based on their health, income, and lifestyle data by communicating with a machine learning model served via FastAPI. To test the app, first run the app.py(FastAPI server)/run the docker image locally/deploy the docker image on cloud(AWS), then update the API address in the fronend.py then run the frontend.py(Streamlit app)
+```bash
+    uvicorn app:app --reload
+```
+```bash
+    streamlit run frontend.py
+```
+├── app.py                  <- FastAPI for predicting insurance premium categories.
+├── requirements.txt        <- Lists all Python dependencies needed to run the application.
+├── Dockerfile              <- Scripts to to build a Docker image for the application.
+├── schema                  <- Pydantic model to validate the input and output data.
+│   │
+│   ├── user_input.py               <- Pydantic model for validating the input from an user.
+│   │
+│   └── prediction_response.py      <- Pydantic model for validating and structuring the output.
+│
+├── models                  <- ML model folder.
+│   │
+│   ├── model.pkl                   <- ML model to make prediction.
+│   │
+│   └── predict.py                  <- Scripts to load a pre-trained ML model and make predictions.
+│
+├── config                  <- Configuration requirements to run the app.
+│   │
+│   └── city_tier.py                <- City tier configuration for Indian cities.
+│
+└── visualize.py
 
 ---
 
@@ -379,7 +552,6 @@ A Docker image is a lightweight, stand-alone, and executable software package th
 2. **Storage**: Images are stored locally on the host machine. They can also be pushed to and pulled from Docker registries like Docker Hub, AWS ECR, or Google Container Registry.
 3. **Distribution**: Images can be shared by pushing them to a Docker registry, allowing others to pull and use the same image.
 4. **Execution**: Images are executed by running containers, which are instances of these images.
-
 
 ## Dockerfile
 A Dockerfile is a text file that contains a series of instructions used to build a Docker image. Each instruction in a Dockerfile creates a layer in the image, allowing for efficient image creation and reuse of layers. Dockerfiles are used to automate the image creation process, ensuring consistency and reproducibility.
@@ -546,38 +718,3 @@ the process of building, storing, and deploying Docker images.
 ```
 6. change security group settings (EC2 > Security > Security group > Edit Inbound rules > Add rule > fill Custom TCP, 8000, 0.0.0.0/0 > Save rules)
 7. Check the API at http://52.66.135.111:8000/ where 52.66.135.111(IP address can be found EC2 > Instances > Instance ID > Public IPv4 address)
-
-
-## Project 1 (Insurance Premium Category Prediction API): 
-To provide a user-friendly interface for predicting a person’s insurance premium category based on their health, income, and lifestyle data by communicating with a machine learning model served via FastAPI. To test the app, first run the app.py(FastAPI server)/run the docker image locally/deploy the docker image on cloud(AWS), then update the API address in the fronend.py then run the frontend.py(Streamlit app)
-```bash
-    uvicorn app:app --reload
-```
-```bash
-    streamlit run frontend.py
-```
-├── app.py                  <- FastAPI for predicting insurance premium categories.
-├── requirements.txt        <- Lists all Python dependencies needed to run the application.
-├── Dockerfile              <- Scripts to to build a Docker image for the application.
-├── schema                  <- Pydantic model to validate the input and output data.
-│   │
-│   ├── user_input.py               <- Pydantic model for validating the input from an user.
-│   │
-│   └── prediction_response.py      <- Pydantic model for validating and structuring the output.
-│
-├── models                  <- ML model folder.
-│   │
-│   ├── model.pkl                   <- ML model to make prediction.
-│   │
-│   └── predict.py                  <- Scripts to load a pre-trained ML model and make predictions.
-│
-├── config                  <- Configuration requirements to run the app.
-│   │
-│   └── city_tier.py                <- City tier configuration for Indian cities.
-│
-└── visualize.py
-# Project 2 (Patient Management System API):
-A fully functional Patient Management System using FastAPI to Create, Read, Update, Delete (CRUD) patient records using a local JSON file (patients.json) as storage. To run this just run the below command(no frontend).
-```bash
-    uvicorn app1:app --reload
-```
