@@ -1,4 +1,4 @@
-# 🧩 What is an API?
+# What is an API?
 An API (Application Programming Interface) is a set of rules and protocols that allow two software components—like frontend and backend—to communicate with each other.s
 Real-Life Analogy:
 Think of an API as a waiter in a restaurant:
@@ -9,7 +9,7 @@ The kitchen prepares the dish (response) and the waiter delivers it back to the 
 ![API](images/image.png)
 ![API Example in Restaurant](images/image-1.png)
 
-## ⚡ Why FastAPI and Not Other Frameworks?
+### Why FastAPI and Not Other Frameworks?
 Most companies prefer FastAPI for deploying ML models due to its:
 Speed (based on asynchronous programming)
 Easy integration with Python-based ML workflows
@@ -18,14 +18,14 @@ Built-in validation and error handling using pydantic
 Fast development and testing processs
 All these benefits make FastAPI ideal for modern, scalable ML applications.
 
-## ❓ Why Do We Need APIs?
+### Why Do We Need APIs?
 Let’s take the example of IRCTC (Indian Railway Catering and Tourism Corporation):
 Initially, when everything was built as a monolithic application (single application i.e. frontend and backend code in single directory thus enabling direct communication without API), both frontend and backend code existed within a single structure. In such a setup:
 - Frontend directly called backend functions to fetch data from the database.
 - Communication between frontend and backend was internal and didn’t require APIs.
 - However, this tight coupling meant that a failure in one component could affect the entire system.
 
-## 🤖 So, why move to APIs?
+### So, why move to APIs?
 Imagine third-party services like MakeMyTrip, Yatra, or Ixigo want real-time train data from IRCTC for trains between two locations and agreed to pay for it. With a monolithic setup:
 - You can't give direct access to your internal backend.
 - You can’t expose your database either.
@@ -36,10 +36,11 @@ Solution: Add an API layer on top of your backend.
 - The response from the API come in a specific format called json (universal data format) enabling all the backend written in different languages to communicate easily like makemytrip, yatra and ixigo etc. may be using python, java and php backend respectively.
 - Here, Backend and frontend are not coupled like in Monolithic Architecture.
 
-## 🌐 Why APIs Are Needed for ML Models + Why FastAPI?
+### Why APIs Are Needed for ML Models + Why FastAPI?
 APIs are essential for making machine learning models accessible and usable across various platforms. This write-up covers the importance of APIs, why FastAPI is often chosen for ML deployment, and a simple analogy to help understand APIs in real-world scenarios.
 To make a machine learning model accessible to the rest of the world, an API (Application Programming Interface) is required. Machine learning models often rely on structured data or predictions, and users (clients or customers) want to access these services through a backend system.
 APIs act as bridges that allow your ML model (hosted on a server) to be used on various platforms, such as websites, mobile apps, or even other services.
+
 For example, OpenAI's ChatGPT model is accessible through an API—developers can integrate it into their own websites or applications seamlessly.
 
 ![API on multiple platform](images/image-2.png)
@@ -47,13 +48,14 @@ For example, OpenAI's ChatGPT model is accessible through an API—developers ca
 ## What is fastAPI?
 FastAPI is a modern, high-performance web framework for building APIs with Python. It is made using two most popular libraries Starlette (manages how your API receives requests and sends back responses) and pydantic(data validation library to check if the data incoming into your API is correct and in the right format).
 
-## Objectives of FastAPI?
+### Objectives of FastAPI?
 - Fast to run and handle concurrent users
 - Fast to code the API
 
-## Why FastAPI is so fast?
+### Why FastAPI is so fast?
 - When we deploy ML model on AWS, It has two components.
 Web Server: Listen http requests that are coming to the port of AWS machine on which the API is running.
+
 Example of http request received by the Web Server.
 ```bash
     POST /predict HTTP/1.1
@@ -66,12 +68,14 @@ Example of http request received by the Web Server.
     }
 ```
 - API Code: It contains number of future values model will get, how to load the model, call the function to generate the prediction.
+
 Example of Output of the model
 ```bash
 "prediction:8.3"
 ```
 
 - SGI(Server Gateway Interface): convert http request into python understandable format.
+
 Example of output of http request to be passed to the API Code.
 ```bash
 Request.method --> "POST"
@@ -88,8 +92,8 @@ Content-Type: application/json
 ```
 ![FastAPI](images/image-3.png)
 
-## Flask VS FastAPI:
-In Flask, we use WSGI(Web Server Gateway Interface) by the name of Gunicorn as SGI which is Synchronous Endpoint. Its synchronous nature (one request at a time) and blocking architecture can lead to slower request processing and scalability challenges. It uses Werkzeug.
+### Flask VS FastAPI:
+In Flask, we use **WSGI(Web Server Gateway Interface)** by the name of Gunicorn as SGI which is Synchronous Endpoint. Its synchronous nature (one request at a time) and blocking architecture can lead to slower request processing and scalability challenges. It uses Werkzeug.
 ```python
 @app.route("/predict", methods=["POST"])
 def predict():
@@ -98,7 +102,7 @@ def predict():
     result = predict_sync(data)
     return jsonify(result)
 ```
-In FastAPI, we use ASGI(Asynchronous Server Gateway Interface) by the name of uvicorn as SGI which is Asynchronous Endpoint. It can process multiple request concurrently and provide high performance. It uses Starlette.
+In FastAPI, we use **ASGI(Asynchronous Server Gateway Interface)** by the name of uvicorn as SGI which is Asynchronous Endpoint. It can process multiple request concurrently and provide high performance. It uses Starlette.
 Here, if predict_async(data) will take longer time and new request came then function predict will process the next one without waiting for the output of the first one.
 ```python
 @app.post("/predict")
@@ -107,12 +111,12 @@ async def predict(data: InputData):
     return result
 ```
 
-## Why FastAPI is fast to code?
+### Why FastAPI is fast to code?
 1. Automatic Input Validation using pydantic
 2. Auto-Generated Interactive Documentation
 3. Seamless Integration with Modern Ecosystem (ML/DL libraries, OAuth, JWT, SQL Alchemy, Docker, Kubernetes etc.)
 
-## Example of Basic FastAPI:
+### Example of Basic FastAPI:
 ```python
 from fastapi import FastAPI
 
@@ -137,8 +141,13 @@ uvicorn main:app --reload
 - **Reload** will automatically reload the server when you make changes to the code.
 - http://127.0.0.1:8000/docs to see the **API documentation** where 8000 is the **port number** and **127.0.0.1** is the IP address.
 
-## ML model with FastAPI
-- An website that helps patient to maintain patient records to treat the patient better as physical documents can be lost, miss-place etc. It allows you to add new customer profile(create), view(one individual and all patient), update and delete the existing customers. **Here, we are storing the customer profile in a json but ideally one should store in a database.**
+### ML model with FastAPI
+- A fully functional Patient Management System using FastAPI (without frontend) to Create, Read, Update, Delete (CRUD) patient records using a local JSON file (patients.json) as storage. It allows you to add new customer profile(create), view(one individual and all patient), update and delete the existing customers. **Here, we are storing the customer profile in a json but ideally one should store in a database.** 
+
+To run the app, use the below command.
+```bash
+    uvicorn app1:app --reload
+```
 - **endpoints** in the example:
     - /create
     - /view
@@ -149,7 +158,7 @@ uvicorn main:app --reload
 There are two types of websites(softwares):
 1. **Static**: very less interaction between user and client like calender, Blog, Government Website and clock.
 2. **Dynamic**: too much interaction between user and client like MSExcel, YouTube etc.
-- Four operations(**CRUD**) performed in Dynamic Software are:
+- Four operations (**CRUD**) performed in Dynamic Software are:
 
 **Create**: **POST**
 ```python
@@ -209,16 +218,24 @@ def delete_patient(patient_id: str):
 ```
 ![Patients](images/image-4.png)
 
-## Path Parameters: 
+### Path Parameters: 
 They are dynamic segments of a URL path used to identify a specific resource. The Path() furiction in FastAPI is used to provide metadata, validation rules, and documentation hints for path parameters in your API endpoints.
+
 Example:
     Title
+
     Description
+
     Example
+
     ge(greater than equal to), gt, le, It
+
     Min_length
+
     Max_length
+
     regex
+    
     ... (means required)
 
 **HTTP status codes** are 3-digit numbers returned by a web server (like FastAPI) to indicate the result of a client's request (like from a browser or API consumer).
@@ -236,6 +253,7 @@ They help the client (browser, frontend, mobile app, etc.) understand:
 | `3xx`      | Redirection    | Further action needs to be taken (e.g., redirect)        |
 | `4xx`      | Client Error   | Something is wrong with the request from the client      |
 | `5xx`      | Server Error   | Something went wrong on the server side                  |
+
 
 | Status Code | Meaning                   | When It Occurs                                      |
 |-------------|---------------------------|-----------------------------------------------------|
@@ -281,9 +299,9 @@ In this case:
 **Query()** is a utility function provided by FastAPI to declare, validate, and document query parameters in your API endpoints.
 
 It allows you to:
-    - Set default values
-    - Enforce validation rules
-    - Add metadata like description, title, examples
+- Set default values
+- Enforce validation rules
+- Add metadata like description, title, examples
 
 | Parameter/Option      | Description                                |
 |-----------------------|--------------------------------------------|
@@ -320,22 +338,24 @@ Pydantic is a Python library used for data validation and settings management us
 
 ## Pydantic Model and its working :
 1. Define a Pydantic model that represents the ideal schema of the data.
-- This includes the expected fields, their types, and any validation constraints (e.g., gt=0 for positive numbers).
+    - This includes the expected fields, their types, and any validation constraints (e.g., gt=0 for positive numbers).
 2. Instantiate the model with raw input data (usually a dictionary or JSON-like structure).
-- Pydantic will automatically validate the data and coerce it into the correct Python types (if possible).
-- If the data doesn't meet the model's requirements, Pydantic raises a ValidationError.
+    - Pydantic will automatically validate the data and coerce it into the correct Python types (if possible).
+    - If the data doesn't meet the model's requirements, Pydantic raises a ValidationError.
 3. Pass the validated model object to functions or use it throughout your codebase.
-- This ensures that every part of your program works with clean, type-safe, and logically valid data.
+    - This ensures that every part of your program works with clean, type-safe, and logically valid data.
+
 NOTE: Use Pydantic v2 as it is significantly faster and more feature-rich compared to v1.
 
-## Response Model in FastAPI
+### Response Model in FastAPI
 In FastAPI, a Response Model defines the structure of the data that your API endpoint will return. It helps in:
 1. Generating clean API docs (/docs).
 2. Validating output (so your API doesn't return malformed responses).
 3. Filtering out unnecessary or extra data from the response.
+
 NOTE: Just like we validate user input, we also validate model output sent to the user using the Response Model.
 
-## Pydantic Components and Keywords:
+### Pydantic Components and Keywords:
 
 **BaseModel** : The base class for all Pydantic models. Used to define schema and validation logic.
 
@@ -444,14 +464,14 @@ If you have complex data structures, you can define nested Pydantic models to re
             return v
 ```
 
-## Creating a Model Instance
+### Creating a Model Instance
 ```python
     UserInput(**data)
     # is equivalent to:
     UserInput(age=data['age'], weight=data['weight'], height=data['height'], income_lpa=data['income_lpa'], smoker=data['smoker'], city=data['city'], occupation=data['occupation'],name=data['name'], married=data['married'], allergies=data['allergies'], contact_details=data['contact_details'], email=data['email'], linkedin_url=data['linkedin_url'], Adddress=Adddress(**data['Adddress']))
 ```
 
-## Dictionary Conversion with .model_dump()
+### Dictionary Conversion with .model_dump()
 ```python
     temp = user1.model_dump() # dictionary with all fields
     temp = user1.model_dump(include=['age', 'weight']) # only age and weight
@@ -461,65 +481,31 @@ If you have complex data structures, you can define nested Pydantic models to re
     print(type(temp)) # <class 'dict'>
 ```
 
-## JSON Conversion with .model_dump_json()
+### JSON Conversion with .model_dump_json()
 ```python
     temp = user1.model_dump_json() # serialized as JSON string (visible as str in type())
     print(type(temp)) # <class 'str'>
 ```
 
-### Example 1 (Patient Management System API):
-A fully functional Patient Management System using FastAPI to Create, Read, Update, Delete (CRUD) patient records using a local JSON file (patients.json) as storage. To run this just run the below command(no frontend).
-```bash
-    uvicorn app1:app --reload
-```
-
-### Example 2 (Insurance Premium Category Prediction API): 
-To provide a user-friendly interface for predicting a person’s insurance premium category based on their health, income, and lifestyle data by communicating with a machine learning model served via FastAPI. To test the app, first run the app.py(FastAPI server)/run the docker image locally/deploy the docker image on cloud(AWS), then update the API address in the fronend.py then run the frontend.py(Streamlit app)
-```bash
-    uvicorn app:app --reload
-```
-```bash
-    streamlit run frontend.py
-```
-```bash
-├── app.py                  <- FastAPI for predicting insurance premium categories.
-├── requirements.txt        <- Lists all Python dependencies needed to run the application.
-├── Dockerfile              <- Scripts to to build a Docker image for the application.
-├── schema                  <- Pydantic model to validate the input and output data.
-│   │
-│   ├── user_input.py               <- Pydantic model for validating the input from an user.
-│   │
-│   └── prediction_response.py      <- Pydantic model for validating and structuring the output.
-│
-├── models                  <- ML model folder.
-│   │
-│   ├── model.pkl                   <- ML model to make prediction.
-│   │
-│   └── predict.py                  <- Scripts to load a pre-trained ML model and make predictions.
-│
-├── config                  <- Configuration requirements to run the app.
-│   │
-│   └── city_tier.py                <- City tier configuration for Indian cities.
-│
-└── visualize.py
-```
 ---
 
 # What is Docker?
 Docker is a platform designed to help developers build, share, and run container applications.
 
-## Why do we need dockers?
+### Why do we need dockers?
 **Consistency Across Environments**
 - **Problem**: Applications often behave differently in development, testing, and production environments due to variations in configurations, dependencies, and infrastructure.
 - **Solution**: Docker containers encapsulate all the necessary components, ensuring the application runs consistently across all environments.
+
 **Isolation**
 - **Problem**: Running multiple applications on the same host can lead to conflicts, such as dependency clashes or resource contention.
 - **Solution**: Docker provides isolated environments for each application, preventing interference and ensuring stable performance.
+
 **Scalability**
 - **Problem**: Scaling applications to handle increased load can be challenging, requiring manual intervention and configuration.
 - **Solution**: Docker makes it easy to scale applications horizontally by running multiple container instances, allowing for quick and efficient scaling.
 
-## How exactly Docker is used?
+### How exactly Docker is used?
 
 ![Working of Docker](images/image-1.png)
 
@@ -528,7 +514,7 @@ The core component of the Docker platform, responsible for creating, running, an
 
 ![Docker Engine](images/image-2.png)
 
-## Components of Docker Engine
+### Components of Docker Engine
 
 1. **Docker Daemon (dockerd)**:
 
@@ -607,9 +593,11 @@ A Docker container is a lightweight, portable, and isolated environment that enc
 ## Registry
 A Docker registry is a service that stores and distributes Docker images. It acts as a repository where users can push, pull, and manage Docker images. Docker Hub is the most well-known public registry, but private registries can also be set up to securely store and manage images within an organization.
 
+
 ### Key Components of a Docker Registry
 1. **Repositories**: A repository is a collection of related Docker images, typically different versions of the same application. Each repository can hold multiple tags, representing different versions of an image.
 2. **Tags**: Tags are used to version images within a repository. For example, myapp:1.0, myapp:2.0, and myapp:latest are tags for different versions of the myapp image.
+
 
 ### Types of Docker Registries
 1. **Docker Hub**:
@@ -623,6 +611,7 @@ A Docker registry is a service that stores and distributes Docker images. It act
     - **Examples**: Amazon Elastic Container Registry (ECR), Google Container Registry (GCR), Azure Container Registry (ACR).
     - **Use Case**: Integrating with cloud platforms for seamless deployment and management of images within cloud infrastructure.
 
+
 ### Benefits of Using Docker Registries
 1. **Centralized Image Management**: Registries provide a centralized location to store and
 manage Docker images, making it easier to organize and distribute them.
@@ -634,6 +623,7 @@ to share images with the community or within teams.
 controlled within an organization.
 5. **Integration with CI/CD**: Registries integrate seamlessly with CI/CD pipelines, automating
 the process of building, storing, and deploying Docker images.
+
 
 ### Use-cases
 **Microservices Architecture**
@@ -664,7 +654,8 @@ the process of building, storing, and deploying Docker images.
 - **Description**: Developing and deploying APIs in containers.
 - **Benefits**: Ensures APIs run consistently across environments, simplifies scaling, and improves deployment speed and reliability.
 
-## Steps to create a Docker Image
+
+### Steps to create a Docker Image
 1. Install Docker from https://www.docker.com/products/docker-desktop/.
 2. Create account on Docker Hub (https://hub.docker.com/repositories/vivekkumar7171)
 3. Create a Dockerfile in project folder
@@ -688,9 +679,10 @@ the process of building, storing, and deploying Docker images.
 ```bash
     docker run -d -p 8000:8000 vivekkumar7171/fastapi_pydantic_docker
 ```
- NOTE: here, -d is used to run the container in detached mode (background) — you get control of your terminal immediately, without -d is used to Runs in foreground — the container’s logs/output are streamed directly to your terminal.
 
-## Correct way to close the Docker Desktop
+NOTE: Here, -d is used to run the container in detached mode (background) — you get control of your terminal immediately, without -d is used to Runs in foreground — the container’s logs/output are streamed directly to your terminal.
+
+### Correct way to close the Docker Desktop
 1. Stop all running containers:
 ```bash
     docker ps        # check running containers
@@ -701,15 +693,25 @@ the process of building, storing, and deploying Docker images.
 ```bash
     docker system prune -a --volumes
 ```
-Here, -a removes all stopped containers and unused images. --volumes clears unused volumes too. ⚠️ Be careful: This removes a lot — only run it if you don’t need old containers/images.
+
+Here, -a removes all stopped containers and unused images. --volumes clears unused volumes too. Be careful: This removes a lot — only run it if you don’t need old containers/images.
 
 3. Exit Docker Desktop properly:
     Right-click the Docker icon in the system tray (bottom-right). Select "Quit Docker Desktop". Wait for the vmmem process to terminate in Task Manager.
 
-## Steps for deployment of API on AWS
+
+### Steps for deployment of API on AWS
+
 1. Create AWS accout if you don't have
-1. Create an EC2 instance (EC2 > instances > Launch instances > name it (fastapi_pydantic_docker) > select OS as Ubuntu > t2.micro for free tier > select Key pair name required to connect locally > make sure SSH is selected and Anywhere (0.0.0.0/0) > storage size 8 bg > Launch instance)
-2. Connect to the EC2 instance (EC2 > instances > Instance ID > Connect > Connect)
+
+1. Create an EC2 instance 
+
+(EC2 > instances > Launch instances > name it (fastapi_pydantic_docker) > select OS as Ubuntu > t2.micro for free tier > select Key pair name required to connect locally > make sure SSH is selected and Anywhere (0.0.0.0/0) > storage size 8 bg > Launch instance)
+
+2. Connect to the EC2 instance 
+
+(EC2 > instances > Instance ID > Connect > Connect)
+
 3. Run the following commands
 ```bash
     sudo apt-get update # to update EC2 instance packages
@@ -720,11 +722,54 @@ Here, -a removes all stopped containers and unused images. --volumes clears unus
     sudo usermod -aG docker $USER # giving docker to download Docker Image from external source and run them.
     exit
 ```
+
 4. Restart a new connection to EC2 instance
+
 5. Run the following commands
 ```bash
     docker pull vivekkumar7171/fastapi_pydantic_docker:latest
     docker run -p 8000:8000 vivekkumar7171/fastapi_pydantic_docker
 ```
-6. Change security group settings (EC2 > Security > Security group > Edit Inbound rules > Add rule > fill Custom TCP, 8000, 0.0.0.0/0 > Save rules)
-7. Check the API at http://52.66.135.111:8000/ where 52.66.135.111(IP address can be found EC2 > Instances > Instance ID > Public IPv4 address)
+
+6. Change security group settings 
+
+(EC2 > Security > Security group > Edit Inbound rules > Add rule > fill Custom TCP, 8000, 0.0.0.0/0 > Save rules)
+
+7. Check the API at http://52.66.135.111:8000/ where 52.66.135.111
+
+(IP address can be found EC2 > Instances > Instance ID > Public IPv4 address)
+
+
+# (Insurance Premium Category Prediction API): 
+To illustrate the whole FastAPI, Pydantic and Docker and to provide a user-friendly interface for predicting a person’s insurance premium category based on their health, income, and lifestyle data by communicating with a machine learning model served via FastAPI. To test the app, first run the app.py(FastAPI server)/run the docker image locally/deploy the docker image on cloud(AWS), then update the API address in the fronend.py then run the frontend.py(Streamlit app)
+
+```bash
+    uvicorn app:app --reload
+```
+
+```bash
+    streamlit run frontend.py
+```
+
+```bash
+├── app.py                  <- FastAPI for predicting insurance premium categories.
+├── requirements.txt        <- Lists all Python dependencies needed to run the application.
+├── Dockerfile              <- Scripts to to build a Docker image for the application.
+├── schema                  <- Pydantic model to validate the input and output data.
+│   │
+│   ├── user_input.py               <- Pydantic model for validating the input from an user.
+│   │
+│   └── prediction_response.py      <- Pydantic model for validating and structuring the output.
+│
+├── models                  <- ML model folder.
+│   │
+│   ├── model.pkl                   <- ML model to make prediction.
+│   │
+│   └── predict.py                  <- Scripts to load a pre-trained ML model and make predictions.
+│
+├── config                  <- Configuration requirements to run the app.
+│   │
+│   └── city_tier.py                <- City tier configuration for Indian cities.
+│
+└── visualize.py
+```
